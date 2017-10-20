@@ -26,6 +26,9 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        self.title = "Edit Postcard"
+        self.splitViewController?.view.backgroundColor = UIColor.lightGray
+        
         setupDragAndDrop()
         
         createColors()
@@ -58,8 +61,49 @@ class ViewController: UIViewController {
         let dropInteraction = UIDropInteraction(delegate: self)
         self.postcard.addInteraction(dropInteraction)
         
+        let dragInteraction = UIDragInteraction(delegate: self)
+        self.postcard.addInteraction(dragInteraction)
+        
     }
-
+    @IBAction func changeText(_ sender: UITapGestureRecognizer) {
+        
+        let location = sender.location(in: self.postcard)
+        var changeTop = false
+        if location.y < postcard.bounds.midY {
+            changeTop = true
+        }
+        else {
+            changeTop = false
+        }
+        
+        let alert = UIAlertController(title: "Change Text", message: nil, preferredStyle: .alert)
+        alert.addTextField { (textField) in
+            textField.placeholder = "Enter what you'd like to say"
+            if changeTop {
+                textField.text = self.topText
+            }
+            else {
+                textField.text = self.bottomText
+            }
+        }
+        
+        alert.addAction(UIAlertAction(title: "Change", style: .default, handler: { (_) in
+            guard let text = alert.textFields?.first?.text else { return }
+            if changeTop {
+                self.topText = text
+            }
+            else {
+                self.bottomText = text
+            }
+            self.renderPostcard()
+        }))
+        
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
+        self.present(alert, animated: true, completion: nil)
+        
+    }
+    
 }
 
 // MARK: - Collection view datasource
@@ -102,6 +146,18 @@ extension ViewController: UICollectionViewDragDelegate {
     
 }
 
+// MARK: - UIDragInteractionDelegate
+extension ViewController: UIDragInteractionDelegate {
+    
+    func dragInteraction(_ interaction: UIDragInteraction, itemsForBeginning session: UIDragSession) -> [UIDragItem] {
+        guard let image = self.postcard.image else { return [] }
+        let provider = NSItemProvider(object: image)
+        let item = UIDragItem(itemProvider: provider)
+        return [item]
+    }
+    
+}
+
 // MARK: - UIDropInteractionDelegate
 extension ViewController: UIDropInteractionDelegate {
 
@@ -124,6 +180,11 @@ extension ViewController: UIDropInteractionDelegate {
         }
         else if session.hasItemsConforming(toTypeIdentifiers: [kUTTypeImage as String]) {
             // Handle images
+            session.loadObjects(ofClass: UIImage.self, completion: { (items) in
+                guard let image = items.first as? UIImage else { return }
+                self.image = image
+                self.renderPostcard()
+            })
         }
         else {
             // Handle colors
