@@ -16,6 +16,18 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
+        
+        // Make the split view controller work in portrait orientation
+        if let split = self.window?.rootViewController as? UISplitViewController {
+            split.preferredDisplayMode = .allVisible
+            
+            // Get the right-hand VC
+            if let navController = split.viewControllers.last as? UINavigationController {
+                // Get the postcard view controller
+                navController.topViewController?.navigationItem.leftBarButtonItem = split.displayModeButtonItem
+            }
+        }
+        
         return true
     }
 
