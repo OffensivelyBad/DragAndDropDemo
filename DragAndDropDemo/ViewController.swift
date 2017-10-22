@@ -12,9 +12,11 @@ import MobileCoreServices
 class ViewController: UIViewController {
     
     @IBOutlet weak var colorSelection: UICollectionView!
+    @IBOutlet weak var savedPostcards: UICollectionView!
     @IBOutlet weak var postcard: UIImageView!
     
     var colors = [UIColor]()
+    var postcards = [UIImage]()
     var image: UIImage?
     var topText = "Visit Hell"
     var topFontName = "Helvetica Neue"
@@ -64,6 +66,11 @@ class ViewController: UIViewController {
         let dragInteraction = UIDragInteraction(delegate: self)
         self.postcard.addInteraction(dragInteraction)
         
+        let saveDropInteraction = UIDropInteraction(delegate: self)
+        self.savedPostcards.dropDelegate = self
+        self.savedPostcards.dragDelegate = self
+        self.savedPostcards.addInteraction(saveDropInteraction)
+        
     }
     @IBAction func changeText(_ sender: UITapGestureRecognizer) {
         
@@ -109,18 +116,41 @@ class ViewController: UIViewController {
 // MARK: - Collection view datasource
 extension ViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return self.colors.count
+        if collectionView == self.colorSelection {
+            return self.colors.count
+        }
+        else if collectionView == self.savedPostcards {
+            return self.postcards.count + 1
+        }
+        return 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath)
-        cell.backgroundColor = self.colors[indexPath.row]
-        cell.layer.borderColor = UIColor.black.cgColor
-        cell.layer.borderWidth = 1
-        cell.layer.cornerRadius = 5
-        return cell
+        
+        if collectionView == self.colorSelection {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath)
+            cell.layer.borderColor = UIColor.black.cgColor
+            cell.layer.borderWidth = 1
+            cell.layer.cornerRadius = 5
+            cell.backgroundColor = self.colors[indexPath.row]
+            return cell
+        }
+        else if collectionView == self.savedPostcards {
+            let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "Cell", for: indexPath) as! SavedPostcardCollectionViewCell
+            if indexPath.row >= self.postcards.count {
+                // This is a placeholder for a new saved postcard
+                cell.postcardImage.backgroundColor = .lightGray
+                cell.postcardImage.alpha = 0.5
+            }
+            else {
+                cell.postcardImage.alpha = 1
+                cell.postcardImage.image = self.postcards[indexPath.row]
+            }
+            return cell
+        }
+        
+        return UICollectionViewCell()
     }
-    
     
 }
 
@@ -138,10 +168,38 @@ extension ViewController: UICollectionViewDelegate {
 extension ViewController: UICollectionViewDragDelegate {
     
     func collectionView(_ collectionView: UICollectionView, itemsForBeginning session: UIDragSession, at indexPath: IndexPath) -> [UIDragItem] {
-        let color = self.colors[indexPath.row]
-        let provider = NSItemProvider(object: color)
-        let item = UIDragItem(itemProvider: provider)
-        return [item]
+        
+        if collectionView == self.colorSelection {
+            let color = self.colors[indexPath.row]
+            let provider = NSItemProvider(object: color)
+            let item = UIDragItem(itemProvider: provider)
+            return [item]
+        }
+        else if collectionView == self.savedPostcards {
+            guard indexPath.row < self.postcards.count - 1 else { return [] }
+            let image = self.postcards[indexPath.row]
+            let provider = NSItemProvider(object: image)
+            let item = UIDragItem(itemProvider: provider)
+            return [item]
+        }
+        return []
+    }
+    
+}
+
+// MARK: - Collection view drop delegate
+extension ViewController: UICollectionViewDropDelegate {
+    
+    func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
+        guard collectionView == self.savedPostcards else { return }
+        let session = coordinator.session
+        if session.hasItemsConforming(toTypeIdentifiers: [kUTTypeImage as String]) {
+            session.loadObjects(ofClass: UIImage.self, completion: { (items) in
+                guard let image = items.first as? UIImage else { return }
+                self.postcards.append(image)
+                self.savedPostcards.reloadData()
+            })
+        }
     }
     
 }

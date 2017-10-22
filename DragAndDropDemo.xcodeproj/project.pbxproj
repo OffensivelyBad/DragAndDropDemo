@@ -13,6 +13,7 @@
 		710905451F98484900988557 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 710905441F98484900988557 /* Assets.xcassets */; };
 		710905481F98484900988557 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 710905461F98484900988557 /* LaunchScreen.storyboard */; };
 		710905501F9848E900988557 /* FontsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7109054F1F9848E900988557 /* FontsViewController.swift */; };
+		710905541F9D28FF00988557 /* SavedPostcardCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 710905531F9D28FF00988557 /* SavedPostcardCollectionViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +25,7 @@
 		710905471F98484900988557 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		710905491F98484900988557 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		7109054F1F9848E900988557 /* FontsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FontsViewController.swift; sourceTree = "<group>"; };
+		710905531F9D28FF00988557 /* SavedPostcardCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SavedPostcardCollectionViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +61,7 @@
 				7109053D1F98484900988557 /* AppDelegate.swift */,
 				7109053F1F98484900988557 /* ViewController.swift */,
 				7109054F1F9848E900988557 /* FontsViewController.swift */,
+				710905531F9D28FF00988557 /* SavedPostcardCollectionViewCell.swift */,
 				710905411F98484900988557 /* Main.storyboard */,
 				710905441F98484900988557 /* Assets.xcassets */,
 				710905461F98484900988557 /* LaunchScreen.storyboard */,
@@ -141,6 +144,7 @@
 			files = (
 				710905401F98484900988557 /* ViewController.swift in Sources */,
 				710905501F9848E900988557 /* FontsViewController.swift in Sources */,
+				710905541F9D28FF00988557 /* SavedPostcardCollectionViewCell.swift in Sources */,
 				7109053E1F98484900988557 /* AppDelegate.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
