@@ -190,6 +190,11 @@ extension ViewController: UICollectionViewDragDelegate {
 // MARK: - Collection view drop delegate
 extension ViewController: UICollectionViewDropDelegate {
     
+    func collectionView(_ collectionView: UICollectionView, dropSessionDidUpdate session: UIDropSession, withDestinationIndexPath destinationIndexPath: IndexPath?) -> UICollectionViewDropProposal {
+        let proposal = UICollectionViewDropProposal(operation: .copy, intent: .insertIntoDestinationIndexPath)
+        return proposal
+    }
+    
     func collectionView(_ collectionView: UICollectionView, performDropWith coordinator: UICollectionViewDropCoordinator) {
         guard collectionView == self.savedPostcards else { return }
         let session = coordinator.session
@@ -197,11 +202,10 @@ extension ViewController: UICollectionViewDropDelegate {
             session.loadObjects(ofClass: UIImage.self, completion: { (items) in
                 guard let image = items.first as? UIImage else { return }
                 self.postcards.append(image)
-                self.savedPostcards.reloadData()
+                collectionView.reloadData()
             })
         }
     }
-    
 }
 
 // MARK: - UIDragInteractionDelegate
